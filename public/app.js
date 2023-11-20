@@ -10,8 +10,32 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_renderForm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/renderForm */ "./src/modules/renderForm.js");
+/* harmony import */ var _modules_searchCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/searchCode */ "./src/modules/searchCode.js");
+
 
 (0,_modules_renderForm__WEBPACK_IMPORTED_MODULE_0__["default"])();
+(0,_modules_searchCode__WEBPACK_IMPORTED_MODULE_1__["default"])();
+
+/***/ }),
+
+/***/ "./src/modules/ajaxService.js":
+/*!************************************!*\
+  !*** ./src/modules/ajaxService.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var ajaxService = function ajaxService(city, adress) {
+  var url = "https://api.postit.lt/v2/?city=";
+  var key = '351M6RvXGpFlGkc4jeTu';
+  return fetch("".concat(url).concat(city, "&address=").concat(adress, "&key=").concat(key)).then(function (response) {
+    return response.json();
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ajaxService);
 
 /***/ }),
 
@@ -26,7 +50,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 var form = function form() {
-  return "\n    <div class=\"form-group\">\n        <input class=\"form-control term\" type=\"text\" placeholder=\"Jusu adresas\">\n    </div>\n    <div class=\"form-group\">\n        <input class=\"form-control result\" type=\"text\" readonly>\n    </div>\n    <div class=\"form-group\">\n        <button class=\"btn btn-primary\" type=\"submit\">Ieskoti</button>\n    </div>\n    ";
+  return "\n    <div class=\"alert alert-warning d-none\" role=\"alert\">\n    </div>\n    <div class=\"form-group\">\n        <input class=\"form-control term\" type=\"text\" placeholder=\"Jusu adresas\">\n    </div>\n    <div class=\"form-group\">\n        <input class=\"form-control city\" type=\"text\" placeholder=\"Jusu miestas\">\n    </div>\n    <div class=\"form-group\">\n        <input class=\"form-control result d-none\" type=\"text\" readonly>\n    </div>\n    <div class=\"form-group\">\n        <button class=\"btn btn-primary\" type=\"submit\">Ieskoti</button>\n    </div>\n    ";
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (form);
 
@@ -51,6 +75,44 @@ var renderFrom = function renderFrom() {
   document.querySelector('.card-body').appendChild(formElement);
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (renderFrom);
+
+/***/ }),
+
+/***/ "./src/modules/searchCode.js":
+/*!***********************************!*\
+  !*** ./src/modules/searchCode.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ajaxService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajaxService */ "./src/modules/ajaxService.js");
+
+var searchCode = function searchCode() {
+  document.querySelector('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var searchCity = document.querySelector('.city').value;
+    var searchTerm = document.querySelector('.term').value;
+    var searchResponse;
+    (0,_ajaxService__WEBPACK_IMPORTED_MODULE_0__["default"])(searchCity, searchTerm).then(function (result) {
+      return searchResponse = result;
+    }).then(function () {
+      if (searchResponse.data.length > 0) {
+        var result = document.querySelector('.result');
+        result.classList.remove('d-none');
+        document.querySelector('.alert-warning').classList.add('d-none');
+        result.value = searchResponse.data[0].post_code;
+      } else {
+        var alert = document.querySelector('.alert-warning');
+        alert.classList.remove('d-none');
+        alert.textContent = 'Not found';
+      }
+    });
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (searchCode);
 
 /***/ }),
 

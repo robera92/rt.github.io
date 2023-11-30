@@ -7,11 +7,43 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <main class="container">
-        <div class="card">
-            <h2>Kodo paieska</h2>
-            <div class="card-body"></div>
+    <header class="p-3 text-bg-dark">
+        <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-between">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+              <img src="img/animated/weather.svg" alt="weather" class="img-fluid">
+            </a>
+    
+            <form class="city-search col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+              <input type="search" class="form-control form-control-lg" name="search" placeholder="Ieškokite pagal miestą..." autocomplete="off" aria-label="Search" list="list-cities">
+              <input type="hidden" name="city_name" value=""/>
+              <datalist id="list-cities">
+              </datalist>
+            </form>
+    
+          </div>
         </div>
+      </header>
+
+
+    <main class="container">
+        <div class="row">
+          <div class="col hero m-3">
+            <h1>Orų prognozės</h1>
+            <p class="current-time lead"></p>
+          </div>
+        </div>
+        
+        <div class="row main-content">
+            <div class="col cities-forecast d-flex flex-column flex-sm-row justify-content-between">
+            </div>
+            <div class="current-city">
+                
+            </div>
+        </div>
+        
+
+
     </main>
     <script src="app.js"></script>
 </body>

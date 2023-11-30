@@ -9,110 +9,390 @@
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _modules_renderForm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/renderForm */ "./src/modules/renderForm.js");
-/* harmony import */ var _modules_searchCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/searchCode */ "./src/modules/searchCode.js");
+/* harmony import */ var _modules_renderAutoSugestPlaces__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/renderAutoSugestPlaces */ "./src/modules/renderAutoSugestPlaces.js");
+/* harmony import */ var _modules_renderSmallCityCards__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/renderSmallCityCards */ "./src/modules/renderSmallCityCards.js");
+/* harmony import */ var _modules_renderFoundCityCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/renderFoundCityCard */ "./src/modules/renderFoundCityCard.js");
+var currentTimeZone = "Europe/Vilnius";
 
 
-(0,_modules_renderForm__WEBPACK_IMPORTED_MODULE_0__["default"])();
-(0,_modules_searchCode__WEBPACK_IMPORTED_MODULE_1__["default"])();
+
+(0,_modules_renderSmallCityCards__WEBPACK_IMPORTED_MODULE_1__["default"])();
+(0,_modules_renderAutoSugestPlaces__WEBPACK_IMPORTED_MODULE_0__["default"])();
+(0,_modules_renderFoundCityCard__WEBPACK_IMPORTED_MODULE_2__["default"])();
+
+// display current time
+var timeDisplay = document.querySelector(".current-time");
+function refreshTime() {
+  var dateString = new Date().toLocaleString("lt-LT", {
+    timeZone: currentTimeZone
+  });
+  timeDisplay.innerHTML = dateString;
+}
+setInterval(refreshTime, 1000);
 
 /***/ }),
 
-/***/ "./src/modules/ajaxService.js":
-/*!************************************!*\
-  !*** ./src/modules/ajaxService.js ***!
-  \************************************/
+/***/ "./src/modules/ajax/ajaxServiceCity.js":
+/*!*********************************************!*\
+  !*** ./src/modules/ajax/ajaxServiceCity.js ***!
+  \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-var ajaxService = function ajaxService(city, adress) {
-  var url = "https://api.postit.lt/v2/?city=";
-  var key = '351M6RvXGpFlGkc4jeTu';
-  return fetch("".concat(url).concat(city, "&address=").concat(adress, "&key=").concat(key)).then(function (response) {
+var getCityForecast = function getCityForecast(city_name) {
+  var url = "https://api.meteo.lt/v1/places/" + city_name + "/forecasts/long-term";
+  return fetch(url).then(function (response) {
     return response.json();
   });
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ajaxService);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getCityForecast);
 
 /***/ }),
 
-/***/ "./src/modules/form.js":
-/*!*****************************!*\
-  !*** ./src/modules/form.js ***!
-  \*****************************/
+/***/ "./src/modules/ajax/ajaxServicePlaces.js":
+/*!***********************************************!*\
+  !*** ./src/modules/ajax/ajaxServicePlaces.js ***!
+  \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-var form = function form() {
-  return "\n    <div class=\"alert alert-warning d-none\" role=\"alert\">\n    </div>\n    <div class=\"form-group\">\n        <input class=\"form-control term\" type=\"text\" placeholder=\"Jusu adresas\">\n    </div>\n    <div class=\"form-group\">\n        <input class=\"form-control city\" type=\"text\" placeholder=\"Jusu miestas\">\n    </div>\n    <div class=\"form-group\">\n        <input class=\"form-control result d-none\" type=\"text\" readonly>\n    </div>\n    <div class=\"form-group\">\n        <button class=\"btn btn-primary\" type=\"submit\">Ieskoti</button>\n    </div>\n    ";
+var getPlaces = function getPlaces() {
+  var url = "https://api.meteo.lt/v1/places";
+  return fetch(url).then(function (response) {
+    return response.json();
+  });
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (form);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getPlaces);
 
 /***/ }),
 
-/***/ "./src/modules/renderForm.js":
-/*!***********************************!*\
-  !*** ./src/modules/renderForm.js ***!
-  \***********************************/
+/***/ "./src/modules/convertConditionCode.js":
+/*!*********************************************!*\
+  !*** ./src/modules/convertConditionCode.js ***!
+  \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./form */ "./src/modules/form.js");
-
-var renderFrom = function renderFrom() {
-  var formElement = document.createElement('form');
-  formElement.classList.add('form-line');
-  formElement.innerHTML = (0,_form__WEBPACK_IMPORTED_MODULE_0__["default"])();
-  document.querySelector('.card-body').appendChild(formElement);
+var conditionCode = function conditionCode(code) {
+  var img_name = 'weather.svg';
+  var display_name = 'oro sąlygos nenustatytos';
+  switch (code) {
+    case 'clear':
+      // clear - giedra;
+      img_name = 'clear-day.svg';
+      display_name = 'giedra';
+      break;
+    case 'partly-cloudy':
+      // partly-cloudy - mažai debesuota;
+      img_name = 'cloudy.svg';
+      display_name = 'mažai debesuota';
+      break;
+    case 'variable-cloudiness':
+      // variable-cloudiness - nepastoviai debesuota;
+      img_name = 'cloudy.svg';
+      display_name = 'nepastoviai debesuota';
+      break;
+    case 'cloudy-with-sunny-intervals':
+      // cloudy-with-sunny-intervals - debesuota su pragiedruliais;
+      img_name = 'cloudy-1-day.svg';
+      display_name = 'debesuota su pragiedruliais';
+      break;
+    case 'cloudy':
+      // cloudy - debesuota;
+      img_name = 'cloudy.svg';
+      display_name = 'debesuota';
+      break;
+    case 'thunder':
+      // thunder - perkūnija;
+      img_name = 'thunder.svg';
+      display_name = 'perkūnija';
+      break;
+    case 'isolated-thunderstorms':
+      // isolated-thunderstorms - trumpas lietus su perkūnija;
+      img_name = 'thunderstorms.svg';
+      display_name = 'trumpas lietus su perkūnija';
+      break;
+    case 'thunderstorms':
+      // thunderstorms - lietus su perkūnija;
+      img_name = 'thunderstorms.svg';
+      display_name = 'lietus su perkūnija';
+      break;
+    case 'light-rain':
+      // light-rain - nedidelis lietus;
+      img_name = 'rainy-1-day.svg';
+      display_name = 'nedidelis lietus';
+      break;
+    case 'rain':
+      // rain - lietus;
+      img_name = 'rainy-2-day.svg';
+      display_name = 'lietus';
+      break;
+    case 'heavy-rain':
+      // heavy-rain - smarkus lietus;
+      img_name = 'rainy-3-day.svg';
+      display_name = 'smarkus lietus';
+      break;
+    case 'rain-showers':
+      // rain-showers - trumpas lietus;
+      img_name = 'rainy-6.svg';
+      display_name = 'trumpas lietus';
+      break;
+    case 'light-rain-at-times':
+      // light-rain-at-times - protarpiais nedidelis lietus;
+      img_name = 'rainy-4.svg';
+      display_name = 'protarpiais nedidelis lietus';
+      break;
+    case 'rain-at-times':
+      // rain-at-times - protarpiais lietus;
+      img_name = 'rainy-5.svg';
+      display_name = 'protarpiais lietus';
+      break;
+    case 'light-sleet':
+      // light-sleet - nedidelė šlapdriba;
+      img_name = 'rain-and-sleet-mix.svg';
+      display_name = 'nedidelė šlapdriba';
+      break;
+    case 'sleet':
+      // sleet - šlapdriba;
+      img_name = 'snow-and-sleet-mix.svg';
+      display_name = 'šlapdriba';
+      break;
+    case 'sleet-at-times':
+      // sleet-at-times - protarpiais šlapdriba;
+      img_name = 'snow-and-sleet-mix.svg';
+      display_name = 'protarpiais šlapdriba';
+      break;
+    case 'sleet-showers':
+      // sleet-showers - trumpa šlapdriba;
+      img_name = 'snow-and-sleet-mix.svg';
+      display_name = 'trumpa šlapdriba';
+      break;
+    case 'freezing-rain':
+      // freezing-rain - lijundra;
+      img_name = 'rain-and-sleet-mix.svg';
+      display_name = 'lijundra';
+      break;
+    case 'hail':
+      // hail - kruša;
+      img_name = 'hail.svg';
+      display_name = 'kruša';
+      break;
+    case 'light-snow':
+      // light-snow - nedidelis sniegas;
+      img_name = 'snowy-1-day.svg';
+      display_name = 'nedidelis sniega';
+      break;
+    case 'snow':
+      // snow - sniegas;
+      img_name = 'snowy-2-day.svg';
+      display_name = 'sniegas';
+      break;
+    case 'heavy-snow':
+      // heavy-snow - smarkus sniegas;
+      img_name = 'snowy-3-day.svg';
+      display_name = 'smarkus sniegas';
+      break;
+    case 'snow-showers':
+      // snow-showers - trumpas sniegas;
+      img_name = 'snowy-6.svg';
+      display_name = 'trumpas sniegas';
+      break;
+    case 'snow-at-times':
+      // snow-at-times - protarpiais sniegas;
+      img_name = 'snowy-6.svg';
+      display_name = 'protarpiais sniegas';
+      break;
+    case 'light-snow-at-times':
+      // light-snow-at-times - protarpiais nedidelis sniegas;
+      img_name = 'snowy-6.svg';
+      display_name = 'protarpiais nedidelis sniegas';
+      break;
+    case 'snowstorm':
+      // snowstorm - pūga;
+      img_name = 'snowy-3-day.svg';
+      display_name = 'pūga';
+      break;
+    case 'mist':
+      // mist - rūkana;
+      img_name = 'haze-day.svg';
+      display_name = 'rūkana';
+      break;
+    case 'fog':
+      // fog - rūkas;
+      img_name = 'fog-day.svg';
+      display_name = 'rūkas';
+      break;
+    case 'squall':
+      // squall - škvalas;
+      img_name = 'tornado.svg';
+      display_name = 'škvalas';
+      break;
+    default:
+      // null - oro sąlygos nenustatytos.
+      img_name = 'weather.svg';
+      display_name = 'oro sąlygos nenustatytos';
+  }
+  var hours = new Date().getHours();
+  if (hours < 6 || hours >= 18) {
+    img_name = img_name.replace("-day", '-night');
+  }
+  return {
+    img: img_name,
+    display_name: display_name
+  };
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (renderFrom);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (conditionCode);
 
 /***/ }),
 
-/***/ "./src/modules/searchCode.js":
-/*!***********************************!*\
-  !*** ./src/modules/searchCode.js ***!
-  \***********************************/
+/***/ "./src/modules/renderAutoSugestPlaces.js":
+/*!***********************************************!*\
+  !*** ./src/modules/renderAutoSugestPlaces.js ***!
+  \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _ajaxService__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajaxService */ "./src/modules/ajaxService.js");
+/* harmony import */ var _ajax_ajaxServicePlaces__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax/ajaxServicePlaces */ "./src/modules/ajax/ajaxServicePlaces.js");
 
-var searchCode = function searchCode() {
-  document.querySelector('form').addEventListener('submit', function (e) {
+var renderAutoSugestPlaces = function renderAutoSugestPlaces() {
+  (0,_ajax_ajaxServicePlaces__WEBPACK_IMPORTED_MODULE_0__["default"])().then(function (response) {
+    for (var property in response) {
+      var newOption = document.createElement('option');
+      newOption.setAttribute('data-name', response[property].code);
+      newOption.textContent = response[property].name;
+      document.querySelector('#list-cities').appendChild(newOption);
+    }
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (renderAutoSugestPlaces);
+
+/***/ }),
+
+/***/ "./src/modules/renderFoundCityCard.js":
+/*!********************************************!*\
+  !*** ./src/modules/renderFoundCityCard.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ajax_ajaxServiceCity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax/ajaxServiceCity */ "./src/modules/ajax/ajaxServiceCity.js");
+/* harmony import */ var _convertConditionCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./convertConditionCode */ "./src/modules/convertConditionCode.js");
+
+
+var renderFoundCityCard = function renderFoundCityCard() {
+  document.querySelector('form.city-search').addEventListener('submit', function (e) {
     e.preventDefault();
-    var searchCity = document.querySelector('.city').value;
-    var searchTerm = document.querySelector('.term').value;
-    var searchResponse;
-    (0,_ajaxService__WEBPACK_IMPORTED_MODULE_0__["default"])(searchCity, searchTerm).then(function (result) {
-      return searchResponse = result;
-    }).then(function () {
-      if (searchResponse.data.length > 0) {
-        var result = document.querySelector('.result');
-        result.classList.remove('d-none');
-        document.querySelector('.alert-warning').classList.add('d-none');
-        result.value = searchResponse.data[0].post_code;
-      } else {
-        var alert = document.querySelector('.alert-warning');
-        alert.classList.remove('d-none');
-        alert.textContent = 'Not found';
-      }
+    var formData = new FormData(e.target);
+    var cityName = formData.get('search');
+    (0,_ajax_ajaxServiceCity__WEBPACK_IMPORTED_MODULE_0__["default"])(cityName).then(function (result) {
+      console.log(result);
     });
   });
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (searchCode);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (renderFoundCityCard);
+
+/***/ }),
+
+/***/ "./src/modules/renderSmallCityCards.js":
+/*!*********************************************!*\
+  !*** ./src/modules/renderSmallCityCards.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _templates_smallCityCard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./templates/smallCityCard */ "./src/modules/templates/smallCityCard.js");
+/* harmony import */ var _ajax_ajaxServiceCity__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ajax/ajaxServiceCity */ "./src/modules/ajax/ajaxServiceCity.js");
+/* harmony import */ var _convertConditionCode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./convertConditionCode */ "./src/modules/convertConditionCode.js");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
+
+
+var citiesToLoad = ['vilnius', 'kaunas', 'klaipeda', 'marijampole'];
+var renderSmallCityCard = function renderSmallCityCard(city_code) {
+  var imgPath = "../public/img/animated/";
+
+  // add ajax call to city
+  (0,_ajax_ajaxServiceCity__WEBPACK_IMPORTED_MODULE_1__["default"])(city_code).then(function (result) {
+    var newCard = document.createElement('div');
+    newCard.classList.add(city_code, 'flex-grow-1');
+    newCard.innerHTML = (0,_templates_smallCityCard__WEBPACK_IMPORTED_MODULE_0__["default"])();
+    newCard.querySelector('.city').textContent = result.place.name;
+    var dateNow = new Date();
+    dateNow.setHours(dateNow.getHours() - 1);
+    var closestForecastAvailable = {};
+    var _iterator = _createForOfIteratorHelper(result.forecastTimestamps),
+      _step;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var forecast = _step.value;
+        var parsedDateTest = new Date(forecast.forecastTimeUtc);
+        if (dateNow < parsedDateTest) {
+          closestForecastAvailable = forecast;
+          console.log(forecast);
+          break;
+        }
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+    if (closestForecastAvailable) {
+      var closestForecast = closestForecastAvailable;
+      var parsedDate = new Date(closestForecast.forecastTimeUtc);
+      var currentCondition = (0,_convertConditionCode__WEBPACK_IMPORTED_MODULE_2__["default"])(closestForecast.conditionCode);
+      newCard.querySelector('.time').textContent = parsedDate.getHours() + ":" + String(parsedDate.getMinutes()).padStart(2, "0");
+      ;
+      newCard.querySelector('.temp').textContent = closestForecast.airTemperature;
+      newCard.querySelector('.wind').textContent = closestForecast.windSpeed + 'm/s';
+      newCard.querySelector('.status').textContent = currentCondition.display_name;
+      newCard.querySelector('img').src = imgPath + currentCondition.img;
+      document.querySelector('.cities-forecast').appendChild(newCard);
+    }
+  });
+};
+for (var _i = 0, _citiesToLoad = citiesToLoad; _i < _citiesToLoad.length; _i++) {
+  var city = _citiesToLoad[_i];
+  renderSmallCityCard(city);
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (renderSmallCityCard);
+
+/***/ }),
+
+/***/ "./src/modules/templates/smallCityCard.js":
+/*!************************************************!*\
+  !*** ./src/modules/templates/smallCityCard.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var smallCityCard = function smallCityCard() {
+  return "\n    <div class=\"card flex-grow-1\">\n    <div class=\"card-header d-flex justify-content-between\">\n      <span class=\"city\">-</span>\n      <span class=\"time\">-</span>\n    </div>\n    <div class=\"card-body d-flex flex-column align-items-center\">\n      <img src=\"img/animated/weather.svg\" alt=\"\" class=\"img-fluid\">\n      <span class=\"status\">-</span>\n    </div>\n    <div class=\"card-footer d-flex justify-content-between\">\n        <span class=\"wind\">-</span>\n        <span class=\"temp\">-</span>\n      </div>\n  </div>";
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (smallCityCard);
 
 /***/ }),
 

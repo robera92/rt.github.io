@@ -11976,3 +11976,111 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+body {
+  height: 100vh;
+  background: linear-gradient(0deg, #000 0%, #000 100%), #FFF;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.hero {
+  text-align: center;
+  color: #fff;
+}
+
+.cities-forecast .card {
+  border-radius: 16px;
+  border: 1px solid;
+  background: #121212;
+  box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(40px);
+          backdrop-filter: blur(40px);
+  margin: 20px;
+}
+.cities-forecast .card .city {
+  color: #FFF;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+.cities-forecast .card .time {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+}
+.cities-forecast .card .wind {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.cities-forecast .card .temp {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.cities-forecast .card .temp:after {
+  content: " °";
+}
+.cities-forecast .card .status {
+  color: #FFF;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  text-transform: capitalize;
+}
+
+.current-city .card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #121212;
+  box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(40px);
+          backdrop-filter: blur(40px);
+}
+.current-city .card-header {
+  color: #FFF;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: center;
+}
+.current-city .day-name {
+  color: #FFF;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+.current-city .day-temp {
+  color: #FFF;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  padding: 0 20px 0 0;
+}
+.current-city .day-temp::after, .current-city .night-temp::after {
+  content: " °";
+}
+.current-city .night-temp {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+.current-city .list-group-item {
+  background-color: unset;
+}
+
+.main-content {
+  margin-top: 10vh;
+}

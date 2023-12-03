@@ -24,7 +24,6 @@ const renderSmallCityCard = (city_code)=>{
             let parsedDateTest = new Date(forecast.forecastTimeUtc);
             if(dateNow < parsedDateTest){
                 closestForecastAvailable = forecast;
-                console.log(forecast);
                 break;
             }
         }

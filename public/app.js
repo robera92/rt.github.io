@@ -16,7 +16,6 @@ var currentTimeZone = "Europe/Vilnius";
 
 
 
-(0,_modules_renderSmallCityCards__WEBPACK_IMPORTED_MODULE_1__["default"])();
 (0,_modules_renderAutoSugestPlaces__WEBPACK_IMPORTED_MODULE_0__["default"])();
 (0,_modules_renderFoundCityCard__WEBPACK_IMPORTED_MODULE_2__["default"])();
 
@@ -189,7 +188,7 @@ var conditionCode = function conditionCode(code) {
     case 'light-snow':
       // light-snow - nedidelis sniegas;
       img_name = 'snowy-1-day.svg';
-      display_name = 'nedidelis sniega';
+      display_name = 'nedidelis sniegas';
       break;
     case 'snow':
       // snow - sniegas;
@@ -292,18 +291,79 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ajax_ajaxServiceCity__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax/ajaxServiceCity */ "./src/modules/ajax/ajaxServiceCity.js");
 /* harmony import */ var _convertConditionCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./convertConditionCode */ "./src/modules/convertConditionCode.js");
+/* harmony import */ var _templates_foundCityCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./templates/foundCityCard */ "./src/modules/templates/foundCityCard.js");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 var renderFoundCityCard = function renderFoundCityCard() {
+  var imgPath = "../public/img/animated/";
   document.querySelector('form.city-search').addEventListener('submit', function (e) {
     e.preventDefault();
     var formData = new FormData(e.target);
     var cityName = formData.get('search');
     (0,_ajax_ajaxServiceCity__WEBPACK_IMPORTED_MODULE_0__["default"])(cityName).then(function (result) {
-      console.log(result);
+      var weekForecast = [];
+      var allforecastTimestamps = result.forecastTimestamps;
+      if (allforecastTimestamps.length > 0) {
+        var currentSeachTab = document.querySelector('.list-group-flush');
+        document.querySelector('.current-city').classList.remove('d-none');
+        document.querySelector('.current-city .card-header').textContent = cityName;
+        document.querySelector('.list-group-flush').innerHTML = '';
+        document.querySelector('.cities-forecast').classList.add('d-none');
+        var dateNow = new Date();
+        var _iterator = _createForOfIteratorHelper(allforecastTimestamps),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var forecast = _step.value;
+            var parsedDate = new Date(forecast.forecastTimeUtc);
+            if (parsedDate.getHours() == dateNow.getHours()) {
+              var pushData = {
+                date: parsedDate,
+                time_of_day: 'day',
+                forecast: forecast
+              };
+              weekForecast.push(pushData); // push current weather info
+            }
+          } // loop end
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+        var _iterator2 = _createForOfIteratorHelper(weekForecast),
+          _step2;
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var dayForecast = _step2.value;
+            // display weather
+
+            var singleForecast = document.createElement('li');
+            singleForecast.classList.add("list-group-item");
+            singleForecast.innerHTML = (0,_templates_foundCityCard__WEBPACK_IMPORTED_MODULE_2__["default"])();
+            var convertCurrentCondition = (0,_convertConditionCode__WEBPACK_IMPORTED_MODULE_1__["default"])(dayForecast.forecast.conditionCode);
+            singleForecast.querySelector('.day-name').textContent = new Date(dayForecast.date).toLocaleString('lt-LT', {
+              weekday: 'long'
+            }) + " " + convertCurrentCondition.display_name;
+            singleForecast.querySelector('img').src = imgPath + convertCurrentCondition.img;
+            singleForecast.querySelector('.day-temp').textContent = dayForecast.forecast.airTemperature;
+            currentSeachTab.appendChild(singleForecast);
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+      }
     });
   });
 };
+function displayForecast(forecast) {
+  if (forecast.day == 'today') {}
+}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (renderFoundCityCard);
 
 /***/ }),
@@ -348,7 +408,6 @@ var renderSmallCityCard = function renderSmallCityCard(city_code) {
         var parsedDateTest = new Date(forecast.forecastTimeUtc);
         if (dateNow < parsedDateTest) {
           closestForecastAvailable = forecast;
-          console.log(forecast);
           break;
         }
       }
@@ -376,6 +435,23 @@ for (var _i = 0, _citiesToLoad = citiesToLoad; _i < _citiesToLoad.length; _i++) 
   renderSmallCityCard(city);
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (renderSmallCityCard);
+
+/***/ }),
+
+/***/ "./src/modules/templates/foundCityCard.js":
+/*!************************************************!*\
+  !*** ./src/modules/templates/foundCityCard.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var foundCityCard = function foundCityCard() {
+  return "\n<div class=\"row\">\n<div class=\"col text-center\">\n<span class=\"day-name\"></span>\n</div>\n<div class=\"col text-center\">\n<img src=\"img/animated/weather.svg\" alt=\"\" class=\"img-fluid\">\n</div>\n<div class=\"col text-center\">\n<div class=\"temp-list\">\n<span class=\"day-temp\"></span>\n</div>\n</div>\n</div>";
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (foundCityCard);
 
 /***/ }),
 

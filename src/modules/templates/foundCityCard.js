@@ -1,18 +1,18 @@
 const foundCityCard = ()=>{
 
 return`
-<div class="card m-4 p-4">
-    <div class="card-header"></div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-evenly align-items-center">
-                <span class="day-name"></span>
-                <img class="img-fluid" src="">
-                <div class="temp-list">
-                    <span class="day-temp"></span>
-                    <span class="night-temp"></span>
-                </div>
-        </li>
-    </ul>
+<div class="row">
+<div class="col text-center">
+<span class="day-name"></span>
+</div>
+<div class="col text-center">
+<img src="img/animated/weather.svg" alt="" class="img-fluid">
+</div>
+<div class="col text-center">
+<div class="temp-list">
+<span class="day-temp"></span>
+</div>
+</div>
 </div>`;
 
 }

@@ -86,7 +86,7 @@ const conditionCode = (code)=>{
         break;
         case 'light-snow':    // light-snow - nedidelis sniegas;
             img_name = 'snowy-1-day.svg';
-            display_name = 'nedidelis sniega';
+            display_name = 'nedidelis sniegas';
         break;
         case 'snow':    // snow - sniegas;
             img_name = 'snowy-2-day.svg';

@@ -4,7 +4,7 @@ import renderAutoSugestPlaces from "./modules/renderAutoSugestPlaces";
 import renderSmallCityCard from "./modules/renderSmallCityCards";
 import renderFoundCityCard from "./modules/renderFoundCityCard"
 
-renderSmallCityCard();
+
 renderAutoSugestPlaces();
 renderFoundCityCard();
 

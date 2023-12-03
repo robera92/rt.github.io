@@ -69,15 +69,4 @@ const renderFoundCityCard = ()=>{
 }
 
 
-function displayForecast(forecast){
-
-
-
-    if(forecast.day == 'today'){
-
-    }
-
-}
-
-
 export default renderFoundCityCard
